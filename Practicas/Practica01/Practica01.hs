@@ -7,9 +7,6 @@ module Practica01 where
 --Ejercicio 1
 --Definiciones
 data Nat = Cero | Suc Nat deriving (Eq,Show)
---data ListaNat = Nil | Cons Nat ListaNat --deriving Show
---data BTree a = Void | Node ( BTree a ) a ( BTree a ) deriving Show
---data ListaSnoc a = Empty | Snoc ( ListaSnoc a ) a deriving Show
 
 --Ejercicio 2
 --
@@ -55,17 +52,64 @@ eq (Suc a) (Suc b) = eq a b
 par :: Nat  ->Bool
 par Cero = True
 par (Suc Cero) = False
-par (Suc a) (Suc b) = par a b
+par (Suc (Suc a)) = par a 
 
 --Ejercicio 8
---
+--Revisa si es un Nat impar
 impar :: Nat  ->Bool
-impar = not par
+impar = not . par 
 
 --Ejercicio 9
 --
 toInt:: Nat -> Int
 toInt Cero = 0
-toInt (Suc a) = 1 + (to int a)
+toInt (Suc a) = 1 + (toInt a)
 
 --Ejercicio 10
+--Convierte un entero a Natural
+toNatError :: Int->  Nat
+toNatError 0 = Cero
+toNatError 1 = (Suc Cero)
+toNatError n
+ | (n < 0) = error "***  Exception: Hubo unerror."
+ | otherwise = Suc( toNatError (pred n) )
+
+--Ejercicio 11
+--Convierte un Entero a un Natural con la seguridad de no detener la evalucion
+toNatMaybe  ::Int-> Maybe Nat
+toNatMaybe n
+ | (n < 0) = Nothing    
+ | otherwise = Just (toNatError n)
+
+
+{- CONJUNTOS  -}
+
+type Set a = [a] 
+--deriving (Eq,Show)
+
+--Ejericio 1
+--Funcion que regresa si un elemento ya esta en el conjunto
+pertenece  :: (Eq a)=>a -> Set a -> Bool
+pertenece _ [] = False
+pertenece a (x:xs) 
+ | (a == x) = True
+ | otherwise = pertenece a xs
+
+--ejercicio 2
+--Aseguramos que es un Conjunto
+esConjunto  :: (Eqa)=> Set a ->Bool
+esConjunto [] = []
+esConjunto (x:(y:ys))
+{-esConjunto (x:xs) 
+ | ()
+ |
+ | otherwise = False
+-}
+esConjunto (x:xs) = []
+
+--Funcion Auxiliar de ordenamiento para reducir la complejidad de la busqueda de elementos repetidos 
+qsortc :: (Ord a) => [a] -> [a]
+qsortc [] = []
+qsortc (x:xs) = qsortc [y|y <- xs, y <= x] ++ [x] ++ [y|y <- xs,y > x]
+
+--funcion axiliar que regresa   si hay un numero repetido en una lista ordenado antes de siguiente numero mas grande
