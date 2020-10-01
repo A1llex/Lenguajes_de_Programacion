@@ -114,6 +114,16 @@ toSet (x:xs)
 {-
 --Ejercicio 4
 --Determina si dos conjuntos son iguales
+{-
+eq :: (Eq a)=> Set a -> Set a ->Bool
+eq [] [] = True
+eq (x:xs) (y:ys) 
+ | (pertenece x (y:ys)) && (pertenece y (x:xs) ) = eq xs ys
+ | otherwise = False
+
+-}
+
+
 eq :: (Eq a,Ord a)=> Set a -> Set a ->Bool
 eq [] [] = True
 eq a b = eqaux (qsortc a) (qsortc b)
@@ -133,7 +143,7 @@ qsortc (x:xs) = qsortc [y|y <- xs, y <= x] ++ [x] ++ [y|y <- xs,y > x]
 -}
 
 --Ejercicio 5
---Todos
+--Todos los elementos del primer conjutno cumple la condicionesSubconjunto  :: (Eqa)=>Set a -> Set a ->Bool
 todos :: (Eq a ) => ( a -> Bool ) -> Set a -> Bool
 todos f [] = True
 todos f (x:xs) 
@@ -141,9 +151,50 @@ todos f (x:xs)
  | otherwise = False
 
 --Ejercicio 6
---
+--revisa si al menos uno cumple 
 alguno :: (Eq a)=>Set a -> (a ->Bool) ->Bool
 alguno [] f  = False
 alguno (x:xs) f
  | f x = True
  | otherwise = alguno  xs f
+ 
+--Ejercicio 7
+--agrega un elemento al conjunto
+agrega  :: (Eq a)=> a -> Set a -> Set a
+agrega e [] = [e] 
+agrega e x 
+ | (pertenece e x) = (e : x)
+ | otherwise = x
+
+--Ejercicio 8
+--realiza la union de dos conjuntos
+union:: (Eq a)=>Set a -> Set a -> Set a
+union a [] = a
+union [] a = a
+union x y = toSet (x++y) 
+
+--Ejercicio 9
+--realiza la interseccion de dos conjuntos
+interseccion :: (Eq a)=>Set a -> Set a -> Set a
+interseccion [] _ = []
+interseccion _ [] = []
+interseccion (x:xs) y
+ | (pertenece x y) = x : (interseccion xs y)
+ | otherwise = interseccion xs y
+
+--Ejercicio 10
+--realiza la diferencia A-B
+diferencia  :: (Eq a)=>Set a -> Set a -> Set a
+diferencia [] _ = []
+diferencia a [] =  a
+diferencia (x:xs) y
+ | (pertenece x y) = (diferencia xs y)
+ | otherwise = x :(diferencia xs y)
+
+--Ejercicio 11
+--Revisa si  el primero es subconjunto del segundo
+esSubconjunto  :: (Eq a)=>Set a -> Set a ->Bool
+esSubconjunto [] _ = True
+esSubconjunto (x:xs) y 
+ | (pertenece x y) = esSubconjunto xs y
+ | otherwise = False
