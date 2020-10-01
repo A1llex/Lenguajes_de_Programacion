@@ -97,19 +97,53 @@ pertenece a (x:xs)
 
 --ejercicio 2
 --Aseguramos que es un Conjunto
-esConjunto  :: (Eqa)=> Set a ->Bool
-esConjunto [] = []
-esConjunto (x:(y:ys))
-{-esConjunto (x:xs) 
- | ()
- |
+esConjunto  :: (Eq a)=> Set a ->Bool
+esConjunto [] = True
+esConjunto (x:xs) 
+ | (pertenece x xs) = False
+ | otherwise = esConjunto xs
+
+--erjercicio 3
+--Con una lista tendremos que quitar los elementos repetidos
+toSet  :: (Eq a)=>[a] -> Set a
+toSet [] = []
+toSet (x:xs)
+ | (pertenece x xs) = toSet xs
+ | otherwise =  [x] ++ toSet xs
+
+{-
+--Ejercicio 4
+--Determina si dos conjuntos son iguales
+eq :: (Eq a,Ord a)=> Set a -> Set a ->Bool
+eq [] [] = True
+eq a b = eqaux (qsortc a) (qsortc b)
+
+--Funcion auxiliar para solo ordenar una vez las listas de entrada
+eqaux :: (Eq a)=>Set a -> Set a ->Bool
+eqaux [] [] = True 
+eqaux (x:xs) (y:ys) 
+ | (x == y ) = eqaux xs ys
  | otherwise = False
--}
-esConjunto (x:xs) = []
+eqaux _ _ = False
 
 --Funcion Auxiliar de ordenamiento para reducir la complejidad de la busqueda de elementos repetidos 
 qsortc :: (Ord a) => [a] -> [a]
 qsortc [] = []
 qsortc (x:xs) = qsortc [y|y <- xs, y <= x] ++ [x] ++ [y|y <- xs,y > x]
+-}
 
---funcion axiliar que regresa   si hay un numero repetido en una lista ordenado antes de siguiente numero mas grande
+--Ejercicio 5
+--Todos
+todos :: (Eq a ) => ( a -> Bool ) -> Set a -> Bool
+todos f [] = True
+todos f (x:xs) 
+ | f x = todos f xs
+ | otherwise = False
+
+--Ejercicio 6
+--
+alguno :: (Eq a)=>Set a -> (a ->Bool) ->Bool
+alguno [] f  = False
+alguno (x:xs) f
+ | f x = True
+ | otherwise = alguno  xs f
