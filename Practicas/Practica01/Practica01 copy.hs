@@ -1,125 +1,84 @@
 --Lenguajes de Programacion
 --Práctica 01
 --Fernandez Aguilar Alex Gerardo
+--Pimentel Noriega Angel Christian
 
-module Practica01 where 
-
---Definiciones
-data Natural = Cero | Suc Natural deriving Show
-data ListaNat = Nil | Cons Natural ListaNat --deriving Show
-data BTree a = Void | Node ( BTree a ) a ( BTree a ) deriving Show
-data ListaSnoc a = Empty | Snoc ( ListaSnoc a ) a deriving Show
-
-
---Ejercicio 1
---Funcion que regresa si un numero "Natural" es estrictamente mayor que otro
-mayorQue :: Natural -> Natural -> Bool
-mayorQue Cero Cero = False
-mayorQue Cero b = False
-mayorQue a Cero = True
-mayorQue (Suc a) (Suc b)  = mayorQue a b
-
+--{Ejercicio 1}
+--{Definiendo los numeros naturales}
+data Nat = Cero
+    | Suc Nat
+    deriving(Eq, Show)
 
 --Ejercicio 2
---Funcion que le restara al primer Natural el segundo Natural
-restaNat :: Natural -> Natural -> Natural
-restaNat Cero Cero = error "El Ejercicio Pide que sea estrictamente mayor el primer Natural"
-restaNat Cero b = error "Es necesario que el primer Natural sea mayor al segundo Natural"
-restaNat a Cero = a
-restaNat (Suc a) (Suc b) = restaNat a b
+--suma dos naturales
+suma :: Nat  -> Nat  -> Nat
+suma a Cero = a
+suma Cero b = b
+suma a (Suc b) = Suc(suma a b)
 
---Ejercicio 3
---Funcion que Multiplica dos Naturales
-mulNat :: Natural -> Natural -> Natural
-mulNat Cero Cero = Cero
-mulNat a Cero = Cero
-mulNat Cero b = Cero
-mulNat a (Suc Cero) = a
-mulNat a (Suc b) = sumNat (a) (mulNat a b)
 
---Funcion auxiliar Suma de dos Naturales
-sumNat :: Natural -> Natural -> Natural
-sumNat a Cero = a
-sumNat Cero b = b
-sumNat a (Suc b) = Suc(sumNat a b)
+--{Ejercicio 3}
+--Resta de dos naturales
+sub :: Nat -> Nat -> Nat
+sub x Cero = x
+sub (Suc x) (Suc y) = sub x y
 
 --Ejercicio 4
---Funcion que regresa la reversa de una lista
-reversa :: ListaNat -> ListaNat
-reversa Nil = Nil
-reversa (Cons a  Nil) = (Cons a  Nil)
-reversa (Cons a  bs) = concatena (reversa bs)  (Cons a Nil) 
+--Funcion que Multiplica dos Naturales
+mul :: Nat -> Nat -> Nat
+mul Cero Cero = Cero
+mul a Cero = Cero
+mul Cero b = Cero
+mul a (Suc Cero) = a
+mul a (Suc b) = suma (a) (mul a b)
 
 --Ejercicio 5
---Funcion que concatena dos LisaNat una seguida de la segunda
-concatena :: ListaNat -> ListaNat -> ListaNat
-concatena Nil b = b
-concatena a Nil = a
-concatena (Cons a as) b =  Cons ( a ) (concatena  as  b)
+--funcion que revisa si cual es menor a cual n < m
+menorQue :: Nat -> Nat -> Bool
+menorQue Cero Cero = False
+menorQue Cero y = True
+menorQue x Cero = False
+menorQue (Suc x) (Suc y) = menorQue x y
 
 --Ejercicio 6
---Funcion que busca e indica si un Natural esta dentro de una listaNat
-pertenece :: Natural -> ListaNat ->Bool
-pertenece a  Nil = False
-pertenece a  (Cons b bs) 
- | (igual a b) = True
- | otherwise = (pertenece a bs)
+--funcion que revisa si son el mismo numero
+eq :: Nat  -> Nat  ->Bool
+eq Cero Cero = True
+eq Cero b = False
+eq a Cero = False
+eq (Suc a) (Suc b) = eq a b
 
---Funcion auxiliar para saber si dos Naurales son el mismo 
-igual :: Natural -> Natural -> Bool
-igual Cero Cero = True
-igual a Cero = False
-igual Cero b = False
-igual (Suc a) (Suc b) = igual a b
 
---Ejecicio 7
---Funcion que transformara un arbol en una lista
-inOrden :: BTree a -> [a]
-inOrden Void  = []
-inOrden (Node (ai) e (ad)) = (inOrden ai) ++ [e] ++ (inOrden ad)
+--{Ejercicio 7}
+--Verifica si un Natural es par
+par :: Nat -> Bool
+par Cero = True
+par (Suc Cero) = False
+par (Suc (Suc x)) = par x
 
 --Ejercicio 8
---Funcion que agrega un elemento a un arbol ordenado
-agregaOrden :: (Ord a ) => a -> BTree a -> BTree a
-agregaOrden a ( Node (Void) (e) (Void) )
- | (a<=e) = ( Node (Node(Void)(a)(Void)) (e) (Void) )
- | otherwise = ( Node (Void) (e) (Node(Void)(a)(Void)) )
-agregaOrden a ( Node(ai)(e)(ad))
- | (a<=e) = ( Node ( agregaOrden (a) (ai) ) (e) (ad) )
- | otherwise = ( Node (ai) (e) ( agregaOrden (a) (ad) ) )
+--Revisa si es un Nat impar
+impar :: Nat  ->Bool
+impar = not . par 
 
---Ejercicio 9 
---Funcion que regresa una listaSnoc la devuelve sin la cabeza
-tailSnoc :: ListaSnoc a -> ListaSnoc a
-tailSnoc (Snoc (Empty) a) = Empty
-tailSnoc (Snoc (e)  a) = (Snoc (tailSnoc e) a)
+--{Ejercicio 9}
+--Convierte un natural a un entero
+toInt :: Nat -> Int
+toInt Cero = 0
+toInt (Suc x) = 1 + toInt(x)
 
 --Ejercicio 10
---Funcion que implementa mapeo sobre listas snoc
-mapSnoc :: ( a -> b ) -> ListaSnoc a -> ListaSnoc b
-mapSnoc (f) (Snoc (Empty) e) = (Snoc (Empty) (f e))
-mapSnoc (f) (Snoc (snl) e) = (Snoc (mapSnoc (f) (snl) ) (f e))
+--Convierte un entero a Natural
+toNatError :: Int->  Nat
+toNatError 0 = Cero
+toNatError 1 = (Suc Cero)
+toNatError n
+ | (n < 0) = error "***  Exception: Hubo unerror."
+ | otherwise = Suc( toNatError (pred n) )
 
---Puntos Extra
--- 1 
---Funcion que regresa el largo de una cadena de Int
---La funcion solo funciona con naturales sin incluir al cero
-longitud :: Int -> Int
-longitud 0 = 0
-longitud (a) = 1 + (longitud (div a  10))
-
--- 2
---Funcion como fibonacci pero suma los 3 anteriores
-tribonaccies :: Int -> [Int] 
-tribonaccies 0 = [0]
-tribonaccies 1 = [0,1]
-tribonaccies 2 = [0,1,1]
-tribonaccies n = (tribonaccies (n-1)) ++ [sumtreslist (tribonaccies ( n-1) )] 
-
---Funcion auxiliar que suma los ultimos 3 elementos de las listas
-sumtreslist :: [Int] -> Int
-sumtreslist [] = 0
-sumtreslist [a] = a
-sumtreslist [a,b] = a+b
-sumtreslist [a,b,c] = a+b+c
-sumtreslist (a:b) = sumtreslist( b)
+--Ejercicio 11
+--Convierte un Entero a un Natural con la seguridad de no detener la evalucion
+toNatMaybe  ::Int-> Maybe Nat
+toNatMaybe n
+ | (n < 0) = Nothing    
+ | otherwise = Just (toNatError n)
