@@ -63,28 +63,30 @@ less (x:xs) y
 --Ejercicio 3
 -- Sustitucion
 substitution :: EAB -> Substitution -> EAB
-substitution (V x) (id,value) |  x == id = value
-                              | otherwise = (V x)
-substitution (N x) (id,value) = N x
-substitution (B x) (id,value) = B x
-substitution (Succ x) (id,value) = Succ(substitution x (id,value))
-substitution (Pred x) (id,value) = Pred(substitution x (id,value))
-substitution (Add x y) (id,value) = Add (substitution x (id,value)) (substitution y (id,value))
-substitution (Mul x y) (id,value) = Mul (substitution x (id,value)) (substitution y (id,value))
-substitution (Not x) (id,value) = Not(substitution x (id,value))
-substitution (And x y) (id,value) = And (substitution x (id,value)) (substitution y (id,value))
-substitution (Or x y) (id,value) = Or (substitution x (id,value)) (substitution y (id,value))
-substitution (Lt x y) (id,value) = Lt (substitution x (id,value)) (substitution y (id,value))
-substitution (Gt x y) (id,value) = Gt (substitution x (id,value)) (substitution y (id,value))
-substitution (Eq x y) (id,value) = Eq (substitution x (id,value)) (substitution y (id,value))
-substitution (If con the els) (id,value) = If (substitution con (id,value))(substitution the (id,value))(substitution els (id,value))
-substitution (Let id1 value1 e) (id,value) | id1 == id = (Let id1 value1 e)
-                                           | otherwise = (Let id1 (substitution value1 (id,value)) (substitution e (id,value))) 
+substitution (V x) (id,value)
+ |  x == id = value
+ | otherwise = (V x)
+substitution (N x) s = N x
+substitution (B x) s = B x
+substitution (Succ x) s = Succ(substitution x s)
+substitution (Pred x) s = Pred(substitution x s)
+substitution (Add x y) s = Add (substitution x s) (substitution y s)
+substitution (Mul x y) s = Mul (substitution x s) (substitution y s)
+substitution (Not x) s = Not(substitution x s)
+substitution (And x y) s = And (substitution x s) (substitution y s)
+substitution (Or x y) s = Or (substitution x s) (substitution y s)
+substitution (Lt x y) s = Lt (substitution x s) (substitution y s)
+substitution (Gt x y) s = Gt (substitution x s) (substitution y s)
+substitution (Eq x y) s = Eq (substitution x s) (substitution y s)
+substitution (If con the els) s = If (substitution con s)(substitution the s)(substitution els s)
+substitution (Let id1 value1 e) s@(id,value) 
+ | id1 == id = (Let id1 value1 e)
+ | otherwise = (Let id1 (substitution value1 s) (substitution e s)) 
 
 --Ejercicio 4
 --Compararemos 2 EAB si cambiando sus variables ligadas son la misma
 alphaEq :: EAB -> EAB -> Bool
-alphaEq a@(Let x1 y1 z1) b@(Let x2 y2 z2) = (substitution z1 (x1,y1) ) == (substitution z2 (x2,y2) )
+alphaEq (Let x1 y1 z1) (Let x2 y2 z2) = (substitution z1 (x1,y1) ) == (substitution z2 (x2,y2) )
 alphaEq a b = (a == b)
 
 --Optimizacion 1
